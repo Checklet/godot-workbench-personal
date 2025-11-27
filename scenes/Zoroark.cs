@@ -1,9 +1,13 @@
+using System.Collections;
 using Godot;
-using System;
 
 public partial class Zoroark : AnimatedSprite2D
 {
-    public string CharacterName { get; init; } = "Zoroark";
+    public string CharacterName = "Zoroark";
+    public byte Direction = 0;
+
+    private byte _lastInput;
+    private bool _isWalking;
 
     public override void _Process(double delta)
     {
@@ -16,6 +20,98 @@ public partial class Zoroark : AnimatedSprite2D
         if (Input.IsKeyPressed(Key.S)) currentInput += 0b0100;
         if (Input.IsKeyPressed(Key.A)) currentInput += 0b1000;
 
-        // TODO - Develop algorithm for translating inputs into valid directions for walking.
+        if (currentInput != _lastInput)
+        {
+            switch (currentInput)
+            {
+                case 0b0000:
+                    // idle
+                    PlayIdle();
+                    break;
+
+                case 0b0001:
+                case 0b1011:
+                    // walk up
+                    Direction = 0b0001;
+                    PlayWalk();
+                    break;
+
+                case 0b0010:
+                case 0b0111:
+                    // walk right
+                    Direction = 0b0010;
+                    PlayWalk();
+                    break;
+
+                case 0b0100:
+                case 0b1110:
+                    // walk down
+                    Direction = 0b0100;
+                    PlayWalk();
+                    break;
+
+                case 0b1000:
+                case 0b1101:
+                    // walk left
+                    Direction = 0b1000;
+                    PlayWalk();
+                    break;
+
+                case 0b0101:
+                case 0b1010:
+                case 0b1111:
+                    // no valid input; spin
+                    PlayIdle();
+                    break;
+
+                case 0b0011:
+                case 0b0110:
+                case 0b1100:
+                case 0b1001:
+                    // no valid input; calculate due to last given input
+                    PlayIdle();
+                    break;
+
+                default:
+                    currentInput = 0;
+                    break;
+            }
+
+            _lastInput = currentInput;
+        }
+
+        if (_isWalking)
+        {
+            Position += GetDirectionVector() * 3;
+        }
+    }
+
+    private void PlayIdle()
+    {
+        _isWalking = false;
+
+        if (Direction == 0b0001) Play("idle-up");
+        if (Direction == 0b0010) Play("idle-right");
+        if (Direction == 0b0100) Play("idle-down");
+        if (Direction == 0b1000) Play("idle-left");
+    }
+
+    private void PlayWalk()
+    {
+        _isWalking = true;
+
+        if (Direction == 0b0001) Play("walk-up");
+        if (Direction == 0b0010) Play("walk-right");
+        if (Direction == 0b0100) Play("walk-down");
+        if (Direction == 0b1000) Play("walk-left");
+    }
+
+    private Vector2 GetDirectionVector()
+    {
+        if (Direction == 0b0001) return Vector2.Up;
+        if (Direction == 0b0010) return Vector2.Right;
+        if (Direction == 0b0100) return Vector2.Down;
+        if (Direction == 0b1000) return Vector2.Left;
+        return Vector2.Zero;
     }
 }
