@@ -1,4 +1,3 @@
-using System.Collections;
 using Godot;
 
 public partial class Zoroark : AnimatedSprite2D
@@ -26,7 +25,7 @@ public partial class Zoroark : AnimatedSprite2D
             {
                 case 0b0000:
                     // idle
-                    PlayIdle();
+                    PlayIdle(false);
                     break;
 
                 case 0b0001:
@@ -61,7 +60,7 @@ public partial class Zoroark : AnimatedSprite2D
                 case 0b1010:
                 case 0b1111:
                     // no valid input; spin
-                    PlayIdle();
+                    PlayIdle(true);
                     break;
 
                 case 0b0011:
@@ -69,7 +68,20 @@ public partial class Zoroark : AnimatedSprite2D
                 case 0b1100:
                 case 0b1001:
                     // no valid input; calculate due to last given input
-                    PlayIdle();
+                    switch (Direction)
+                    {
+                        case 0b0001:
+                        case 0b0010:
+                        case 0b0100:
+                        case 0b1000:
+                            Direction ^= currentInput;
+                            PlayWalk();
+                            break;
+
+                        default:
+                            PlayIdle(true);
+                            break;
+                    }
                     break;
 
                 default:
@@ -80,15 +92,18 @@ public partial class Zoroark : AnimatedSprite2D
             _lastInput = currentInput;
         }
 
-        if (_isWalking)
-        {
-            Position += GetDirectionVector() * 3;
-        }
+        if (_isWalking) Position += GetDirectionVector() * 3;
     }
 
-    private void PlayIdle()
+    private void PlayIdle(bool isSpinning)
     {
         _isWalking = false;
+
+        if (isSpinning)
+        {
+            Play("spin");
+            return;
+        }
 
         if (Direction == 0b0001) Play("idle-up");
         if (Direction == 0b0010) Play("idle-right");
