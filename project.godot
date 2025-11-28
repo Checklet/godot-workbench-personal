@@ -21,7 +21,8 @@ project/assembly_name="SomethingPokemon"
 
 folder_colors={
 "res://res/": "pink",
-"res://scenes/": "teal"
+"res://scenes/": "teal",
+"res://src/": "orange"
 }
 
 [rendering]
