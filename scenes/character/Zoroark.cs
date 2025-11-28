@@ -25,7 +25,7 @@ public partial class Zoroark : AnimatedSprite2D
             {
                 case 0b0000:
                     // idle
-                    PlayIdle(false);
+                    PlayIdle();
                     break;
 
                 case 0b0001:
@@ -60,7 +60,7 @@ public partial class Zoroark : AnimatedSprite2D
                 case 0b1010:
                 case 0b1111:
                     // no valid input; spin
-                    PlayIdle(true);
+                    PlayIdle();
                     break;
 
                 case 0b0011:
@@ -79,7 +79,6 @@ public partial class Zoroark : AnimatedSprite2D
                             break;
 
                         default:
-                            PlayIdle(true);
                             break;
                     }
                     break;
@@ -95,30 +94,20 @@ public partial class Zoroark : AnimatedSprite2D
         if (_isWalking) Position += GetDirectionVector() * 3;
     }
 
-    private void PlayIdle(bool isSpinning)
-    {
-        _isWalking = false;
-
-        if (isSpinning)
-        {
-            Play("spin");
-            return;
-        }
-
-        if (Direction == 0b0001) Play("idle-up");
-        if (Direction == 0b0010) Play("idle-right");
-        if (Direction == 0b0100) Play("idle-down");
-        if (Direction == 0b1000) Play("idle-left");
-    }
-
     private void PlayWalk()
     {
         _isWalking = true;
 
-        if (Direction == 0b0001) Play("walk-up");
-        if (Direction == 0b0010) Play("walk-right");
-        if (Direction == 0b0100) Play("walk-down");
-        if (Direction == 0b1000) Play("walk-left");
+        if (Direction == 0b0001) Play("up");
+        if (Direction == 0b0010) Play("right");
+        if (Direction == 0b0100) Play("down");
+        if (Direction == 0b1000) Play("left");
+    }
+
+    private void PlayIdle()
+    {
+        _isWalking = false;
+        Stop();
     }
 
     private Vector2 GetDirectionVector()
