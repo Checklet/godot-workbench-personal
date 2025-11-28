@@ -1,9 +1,7 @@
 using Godot;
 
-public abstract partial class Character : AnimatedSprite2D
+public abstract partial class Creature : AnimatedSprite2D
 {
-    public abstract string CharacterName { get; init; }
-
     private byte _direction;
     private byte _lastInput;
     private bool _isWalking;

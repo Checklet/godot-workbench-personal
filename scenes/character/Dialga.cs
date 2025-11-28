@@ -1,4 +1,1 @@
-public partial class Dialga : Character
-{
-    public override string CharacterName { get; init; } = "Dialga";
-}
+public partial class Dialga : Creature { }
